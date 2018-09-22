@@ -2,7 +2,6 @@ package org.craftedsw.tripservicekata.trip;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,7 +15,6 @@ import static org.craftedsw.tripservicekata.trip.UserBuilder.aUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TripServiceTest {
@@ -33,12 +31,11 @@ public class TripServiceTest {
 
     @InjectMocks
     @Spy
-    private TripService realTripService = new TripService();
+    private TripService tripService = new TripService();
 
     @Test(expected = UserNotLoggedInException.class)
     public void should_throw_an_exception_when_user_is_not_logged_in() {
-
-        realTripService.getTripsByUser(UNUSED_USER, GUEST);
+        tripService.getFriendTrips(UNUSED_USER, GUEST);
     }
 
     @Test
@@ -48,14 +45,13 @@ public class TripServiceTest {
                         .withTrips(TO_MEXICO)
                         .build();
 
-        final List<Trip> friendTrips = realTripService.getTripsByUser(susan, REGISTERED_USER);
+        final List<Trip> friendTrips = tripService.getFriendTrips(susan, REGISTERED_USER);
 
         assertThat(friendTrips.size(), is(0));
     }
 
     @Test
     public void should_return_friend_trips_when_users_are_friends() {
-
         User susan = aUser()
                         .friendsWith(ANOTHER_USER, REGISTERED_USER)
                         .withTrips(TO_MEXICO, TO_AUSTRALIA)
@@ -63,7 +59,7 @@ public class TripServiceTest {
 
         given(tripDAO.tripsBy(susan)).willReturn(susan.trips());
 
-        final List<Trip> friendTrips = realTripService.getTripsByUser(susan, REGISTERED_USER);
+        final List<Trip> friendTrips = tripService.getFriendTrips(susan, REGISTERED_USER);
 
         assertThat(friendTrips.size(), is(2));
     }
