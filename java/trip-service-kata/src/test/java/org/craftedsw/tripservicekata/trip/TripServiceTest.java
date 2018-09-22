@@ -12,13 +12,16 @@ import static org.hamcrest.Matchers.is;
 
 public class TripServiceTest {
 
-    private User loggedInUser;
     private final User UNUSED_USER = null;
     private final User GUEST = null;
     private final User LOGGED_IN_USER = new User();
     private final User CAROL = new User();
+
     private final Trip TO_BOLIVIA = new Trip();
+    private final Trip TO_CANADA = new Trip();
+
     private TripService tripService;
+    private User loggedInUser;
 
     @Before
     public void setUp() throws Exception {
@@ -44,11 +47,30 @@ public class TripServiceTest {
         assertThat(anotherUserTrips.size(), is(0));
     }
 
+    @Test
+    public void should_return_friend_trips_when_users_are_friends() {
+        loggedInUser = LOGGED_IN_USER;
+
+        User anotherUser = new User();
+        anotherUser.addFriend(CAROL);
+        anotherUser.addFriend(loggedInUser);
+        anotherUser.addTrip(TO_BOLIVIA);
+        anotherUser.addTrip(TO_CANADA);
+
+        final List<Trip> anotherUserTrips = tripService.getTripsByUser(anotherUser);
+        assertThat(anotherUserTrips.size(), is(2));
+    }
+
     private class TestableTripService extends TripService {
 
         @Override
         protected User getLoggedInUser() {
             return loggedInUser;
+        }
+
+        @Override
+        protected List<Trip> tripsBy(User user) {
+            return user.trips();
         }
     }
 }
