@@ -2,11 +2,15 @@ package org.craftedsw.tripservicekata.trip;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TripService {
+
+    @Autowired
+    private TripDAO tripDAO;
 
 	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
         if(loggedInUser == null) {
@@ -22,10 +26,8 @@ public class TripService {
         return new ArrayList<Trip>();
     }
 
-    // The static call makes us do this SEAM technique.
-    // We should inject TripDAO and use an instance method.
-    protected List<Trip> tripsBy(User user) {
-        return TripDAO.findTripsByUser(user);
+    private List<Trip> tripsBy(User user) {
+        return tripDAO.tripsBy(user);
     }
 
 }
