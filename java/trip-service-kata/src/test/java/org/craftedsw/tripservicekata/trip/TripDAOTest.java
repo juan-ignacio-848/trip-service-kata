@@ -1,3 +1,13 @@
 package org.craftedsw.tripservicekata.trip;
 
-public class TripDAOTest {}
+import org.craftedsw.tripservicekata.exception.CollaboratorCallException;
+import org.craftedsw.tripservicekata.user.User;
+import org.junit.Test;
+
+public class TripDAOTest {
+
+    @Test(expected = CollaboratorCallException.class)
+    public void should_throw_an_exception_when_retrieving_trips_by_a_user() {
+        new TripDAO().tripsBy(new User());
+    }
+}
