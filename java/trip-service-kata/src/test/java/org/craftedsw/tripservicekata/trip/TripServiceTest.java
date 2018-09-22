@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.craftedsw.tripservicekata.trip.UserBuilder.aUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -37,9 +38,10 @@ public class TripServiceTest {
 
     @Test
     public void should_not_return_any_trips_when_users_are_not_friends() {
-        User susan = new User();
-        susan.addFriend(ANOTHER_USER);
-        susan.addTrip(TO_MEXICO);
+        User susan = aUser()
+                        .friendsWith(ANOTHER_USER)
+                        .withTrips(TO_MEXICO)
+                        .build();
 
         final List<Trip> friendTrips = tripService.getTripsByUser(susan);
 
@@ -48,11 +50,11 @@ public class TripServiceTest {
 
     @Test
     public void should_return_friend_trips_when_users_are_friends() {
-        User susan = new User();
-        susan.addFriend(ANOTHER_USER);
-        susan.addFriend(loggedInUser);
-        susan.addTrip(TO_MEXICO);
-        susan.addTrip(TO_AUSTRALIA);
+
+        User susan = aUser()
+                        .friendsWith(ANOTHER_USER, loggedInUser)
+                        .withTrips(TO_MEXICO, TO_AUSTRALIA)
+                        .build();
 
         final List<Trip> friendTrips = tripService.getTripsByUser(susan);
 
@@ -70,4 +72,5 @@ public class TripServiceTest {
             return user.trips();
         }
     }
+
 }
