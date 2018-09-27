@@ -12,13 +12,13 @@ public class TripService {
     @Autowired
     private TripDAO tripDAO;
 
-    public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
+    public List<Trip> retrieveTripsFrom(User possibleFriend, User loggedInUser) throws UserNotLoggedInException {
         if (loggedInUser == null) {
             throw new UserNotLoggedInException();
         }
 
-        return user.isFriendsWith(loggedInUser)
-                ? tripsBy(user)
+        return possibleFriend.isFriendsWith(loggedInUser)
+                ? tripsBy(possibleFriend)
                 : noTrips();
     }
 

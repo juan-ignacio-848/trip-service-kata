@@ -2,12 +2,10 @@ package org.craftedsw.tripservicekata.trip;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
@@ -35,7 +33,7 @@ public class TripServiceTest {
 
     @Test(expected = UserNotLoggedInException.class)
     public void should_throw_an_exception_when_user_is_not_logged_in() {
-        realTripService.getTripsByUser(CARL, NOT_LOGGED_IN_USER);
+        realTripService.retrieveTripsFrom(CARL, NOT_LOGGED_IN_USER);
     }
 
     @Test
@@ -46,7 +44,7 @@ public class TripServiceTest {
                 .build();
 
 
-        List<Trip> friendTrips = realTripService.getTripsByUser(bob, LOGGED_IN_USER);
+        List<Trip> friendTrips = realTripService.retrieveTripsFrom(bob, LOGGED_IN_USER);
         assertThat(friendTrips.size(), is(0));
     }
 
@@ -59,7 +57,7 @@ public class TripServiceTest {
 
         given(tripDAO.tripsBy(bob)).willReturn(bob.trips());
 
-        List<Trip> friendTrips = realTripService.getTripsByUser(bob, LOGGED_IN_USER);
+        List<Trip> friendTrips = realTripService.retrieveTripsFrom(bob, LOGGED_IN_USER);
         assertThat(friendTrips.size(), is(2));
     }
 
