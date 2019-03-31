@@ -32,7 +32,7 @@ public class TripServiceShould {
     public void not_try_to_find_trips_when_user_is_not_logged_in() {
         tripService = new TestableTripService(NOT_LOGGED_IN_USER);
 
-        tripService.getTripsBy(BOB);
+        tripService.tripsFrom(BOB);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class TripServiceShould {
                         .withTripsTo(COLOMBIA)
                         .build();
 
-        List<Trip> trips = tripService.getTripsBy(carl);
+        List<Trip> trips = tripService.tripsFrom(carl);
 
         assertThat(trips, is(NO_TRIPS));
     }
@@ -55,7 +55,7 @@ public class TripServiceShould {
                         .withTripsTo(COLOMBIA, BRAZIL)
                         .build();
 
-        List<Trip> trips = tripService.getTripsBy(carl);
+        List<Trip> trips = tripService.tripsFrom(carl);
 
         assertThat(trips.size(), is(2));
     }
