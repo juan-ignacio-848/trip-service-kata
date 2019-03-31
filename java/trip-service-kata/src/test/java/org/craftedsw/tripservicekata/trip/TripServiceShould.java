@@ -11,7 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.List;
 
 import static java.util.Collections.EMPTY_LIST;
-import static org.craftedsw.tripservicekata.trip.TripServiceShould.UserBuilder.aUser;
+import static org.craftedsw.tripservicekata.UserBuilder.aUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -66,45 +66,6 @@ public class TripServiceShould {
         List<Trip> trips = tripService.tripsFrom(carl, LOGGED_IN_USER);
 
         assertThat(trips.size(), is(2));
-    }
-
-    static class UserBuilder {
-
-        private User[] friends;
-        private Trip[] trips;
-
-        static UserBuilder aUser() {
-            return new UserBuilder();
-        }
-
-        UserBuilder withFriends(User... friends) {
-            this.friends = friends;
-            return this;
-        }
-
-        UserBuilder withTripsTo(Trip... trips) {
-            this.trips = trips;
-            return this;
-        }
-
-        User build() {
-            User user = new User();
-            addFriendsTo(user);
-            addTripsTo(user);
-            return user;
-        }
-
-        private void addTripsTo(User user) {
-            for(Trip trip : trips) {
-                user.addTrip(trip);
-            }
-        }
-
-        private void addFriendsTo(User user) {
-            for(User friend : friends) {
-                user.addFriend(friend);
-            }
-        }
     }
 
 }
