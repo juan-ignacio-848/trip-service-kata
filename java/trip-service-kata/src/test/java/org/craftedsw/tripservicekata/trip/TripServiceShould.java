@@ -4,6 +4,9 @@ import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
@@ -11,7 +14,9 @@ import static java.util.Collections.EMPTY_LIST;
 import static org.craftedsw.tripservicekata.trip.TripServiceShould.UserBuilder.aUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TripServiceShould {
 
     private static final User NOT_LOGGED_IN_USER = null;
@@ -21,18 +26,19 @@ public class TripServiceShould {
     private static final Trip BRAZIL = new Trip();
     private static final Trip COLOMBIA = new Trip();
 
+    @Mock
+    private TripDAO tripDAO;
+
     private TripService tripService;
 
     @Before
     public void setUp() {
-        tripService = new TestableTripService(LOGGED_IN_USER);
+        tripService = new TripService(tripDAO);
     }
 
     @Test(expected = UserNotLoggedInException.class)
     public void not_try_to_find_trips_when_user_is_not_logged_in() {
-        tripService = new TestableTripService(NOT_LOGGED_IN_USER);
-
-        tripService.tripsFrom(BOB);
+        tripService.tripsFrom(BOB, NOT_LOGGED_IN_USER);
     }
 
     @Test
@@ -42,7 +48,7 @@ public class TripServiceShould {
                         .withTripsTo(COLOMBIA)
                         .build();
 
-        List<Trip> trips = tripService.tripsFrom(carl);
+        List<Trip> trips = tripService.tripsFrom(carl, LOGGED_IN_USER);
 
         assertThat(trips, is(NO_TRIPS));
     }
@@ -55,7 +61,9 @@ public class TripServiceShould {
                         .withTripsTo(COLOMBIA, BRAZIL)
                         .build();
 
-        List<Trip> trips = tripService.tripsFrom(carl);
+        given(tripDAO.tripsBy(carl)).willReturn(carl.trips());
+
+        List<Trip> trips = tripService.tripsFrom(carl, LOGGED_IN_USER);
 
         assertThat(trips.size(), is(2));
     }
@@ -99,22 +107,4 @@ public class TripServiceShould {
         }
     }
 
-    private class TestableTripService extends TripService {
-
-        final User loggedUser;
-
-        TestableTripService(User loggedUser) {
-            this.loggedUser = loggedUser;
-        }
-
-        @Override
-        protected User getLoggedUser() {
-            return loggedUser;
-        }
-
-        @Override
-        protected List<Trip> getTripsByUser(User user) {
-            return user.trips();
-        }
-    }
 }
